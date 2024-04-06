@@ -1,2 +1,10 @@
-# ArchiPolito
-Questa è una repository aperta a tutti gli studenti di Architettura del Politecnico di Torino. All'interno troverete tutto il materiale che raccolgo man mano che i corsi finiscono e vengono svolte le sessioni d'esame. Il materiale arriva da studenti come voi, quindi può contenere errori di ortografia e/o di contenuto.
+# archipolito
+Cos'è questo repository?
+L'idea è di creare un'eredità per tutti gli studenti di Architettura del Politecnico di Torino. 
+
+Il repository è da immaginare come un archivio contenente:
+
+-appunti prodotti dagli studenti e resi pubblici
+-prove d'esame degli anni passati
+-domande degli esami
+-guide per aiutare gli studenti nella vita universitaria

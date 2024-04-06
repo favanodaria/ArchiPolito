@@ -1,0 +1,459 @@
+
+
+
+
+
+
+
+<!DOCTYPE html>
+
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title id="title">idp.polito.it Login Page</title>
+    <link rel="stylesheet" type="text/css" href="/idp/login.css"/>
+    <link rel="stylesheet" type="text/css" href="/idp/css/spid-sp-access-button.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/idp/css/eidas-sp-access-button.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/idp/css/cie-sp-access-button.min.css"/>
+    <script type="text/javascript" src="/idp/jquery.min.js"></script>
+<script type="text/javascript">
+<!--
+    function toggle_visibility(id) {
+       var e = document.getElementById(id);
+       if(e.style.display == 'block')
+          e.style.display = 'none';
+       else
+          e.style.display = 'block';
+    }
+//-->
+ function verifica() {
+		    $("#j_username").val($.trim($("#j_username").val()));
+                    var s = document.getElementById("j_username").value;
+                    s = s.toUpperCase();
+                    var re = new RegExp("^F[0-9]+$");
+                    if (s.match(re)) {
+                        if (confirm("Attenzione, sembra che tu abbia inserito uno username relativo ad apply@polito.\nVuoi procedere su apply.polito.it ?")) {
+                            location.href = "https://didattica.polito.it/pls/portal30/sviluppo.pkg_apply.login";
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                    return true;
+                }
+                function verificacert() {
+                    var isSafari = !!navigator.userAgent.match(/Version\/(5|6)\.[\d\.]+.*Safari/i);
+                    var isMac = !!navigator.platform.match(/MacIntel/i);
+                    if (isSafari && isMac) {
+                        alert("L'autenticazione tramite certificato digitale potrebbe non essere supportata su questo browser. Si consiglia di utilizzare browser alternativi, ad esempio Google Chrome.");
+                    }
+                   return true;
+                }
+
+var messages	= Array();
+
+$(document).ready(function() {
+
+//https://stackoverflow.com/questions/3588628/can-i-change-the-viewport-meta-tag-in-mobile-safari-on-the-fly
+$('head').append('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+
+    var	a1	= Array();
+    var	a2	= Array();
+
+    a1['accessoa'] = "Accesso a";
+    a1['logincert'] = "Login con certificato digitale";
+    a1['loginerror'] = "Errore al login. Verifica username e password";
+    a1['usernamepassword'] = "Login con username e password";
+    a1['modificapassword'] = "Modifica password";
+    a1['dimenticato'] = "Hai dimenticato la password?";
+    a1['bisognoaiuto'] = "Hai bisogno di aiuto?";
+    a1['supporto'] = "Supporto agli utenti";
+    a1['ricordadicomunicare'] = " Ricorda di comunicare sempre il tuo nominativo e numero di matricola, se sei uno studente o fai parte del personale e di segnalare chiaramente il tipo di problema che riscontri.";
+    a1['studenti'] = "Studenti";
+    a1['contatta'] = "Contatta l'";
+    a1['helpdesk'] = "Help Desk";
+    a1['areagestione'] = "dell'Area Gestione Didattica";
+    a1['telefona'] = "telefona al";
+    a1['orario'] = "orario";
+    a1['scrivimessaggio'] = "scrivi un messaggio all'indirizzo";
+    a1['scrivimessaggio2'] = "scrivi un messaggio all'indirizzo";
+    a1['scrivimessaggio3'] = "Contatta l'Ufficio Career Services indicando Ragione sociale, partita iva e i dettagli del problema riscontrato all'indirizzo ";
+    a1['personale'] = "Personale";
+    a1['aziende'] = "Aziende";
+    a1['contattaservicedesk'] = "Contatta il Service Desk dell'Area Information Technology:";
+    a1['telefonaal'] = "telefona al";
+    a1['dallesterno'] = "dall'esterno del Politecnico";
+
+    a2['accessoa'] = "Access to";
+    a2['logincert'] = "Login with digital certificate";
+    a2['loginerror'] = "Error during login. Verify username and password";
+    a2['usernamepassword'] = "Login with username and password";
+    a2['modificapassword'] = "Modify password";
+    a2['dimenticato'] = "Forgot your password ?";
+    a2['bisognoaiuto'] = "Do you need help ?";
+    a2['supporto'] = "User support";
+    a2['ricordadicomunicare'] = " Remember to specify always your name, matricola, if you're a student or a member of the personnel and specify clearly the type of problem you're having.";
+    a2['studenti'] = "Students";
+    a2['contatta'] = "Contact the ";
+    a2['helpdesk'] = "Help Desk";
+    a2['areagestione'] = "of the Area Gestione Didattica";
+    a2['telefona'] = "call ";
+    a2['orario'] = "timetable";
+    a2['scrivimessaggio'] = "write an email to ";
+    a2['scrivimessaggio2'] = "write an email to ";
+    a2['scrivimessaggio3'] = "Contact Career Services office ";
+    a2['personale'] = "Personnel";
+    a2['aziende'] = "Employers";
+    a2['contattaservicedesk'] = "Contact the help desk of the Information Technology Area:";
+    a2['telefonaal'] = "call";
+    a2['dallesterno'] = "from outside the Politecnico";
+
+    messages['it'] = a1;
+    messages['en'] = a2;
+
+    $('#liit').on("click",function(ev) {
+//      $('#p_locale').val('it');
+//      document.forms[0].submit();
+	ev.preventDefault();
+        setLang('it');
+      });
+
+    $('#lien').on("click",function(ev) {
+//      $('#p_locale').val('en');
+//      document.forms[0].submit();
+	ev.preventDefault();
+        setLang('en');
+      });
+});
+
+function getLocaleMessages()
+{
+  var	loc	= $('#p_locale').val();
+
+  window.console&&console.log('getlocalemessages getting messages for locale '+loc);
+
+  return messages[loc];
+}
+
+function	setLang(lang)
+{
+  var lng = Array();
+
+  window.console&&console.log('setting lang to '+lang);
+
+  if ($('#p_locale') != null)
+  {
+    window.console&&console.log('setting p_locale to '+lang);
+    $('#p_locale').val(lang);
+  }
+
+  validmsgs = getLocaleMessages();
+
+  $('li[id^="li"]').removeClass('ulactive');
+  $('#li'+lang).addClass('ulactive');
+
+  window.console&&console.log('lang '+lang+' retrieved, messages has '+messages.length+' elements ');
+  lng = messages[lang];
+  window.console&&console.log('lng has '+lng+' elements');
+  window.console&&console.log('lng has '+lng.length+' elements');
+
+  for (var i in lng)
+  {
+    if ($('#'+i) != null)
+    {
+//      window.console&&console.log('setting text to '+lng[i]);
+      $('#'+i).text(unescapeHTML(lng[i]));
+    }
+    else
+    {
+      window.console&&console.log('element '+i+' is missing');
+    }
+  }
+
+}
+
+function unescapeHTML(html)
+{
+  return $("<div />").html(html).text();
+}
+
+//-->
+</script>
+<!--[if lte IE 9]>
+  <style type="text/css">
+    form label {/* label are visible */
+          text-align:left;
+          position: relative;
+          left: 0em;
+          width: 1em;
+          display: inline;
+    }
+  </style>
+<![endif]-->
+
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <header>
+          <img src="/idp/images/logo_polito.jpg" alt="Politecnico di Torino Logo" style="width: 240px;">
+	  <div id="langbutts" class="langbutts">
+	    <ul class="nav">
+	      <li id="liit" class="dropdown langs ulactive">
+		<span class="dropdown-toggle"><abbr title="Versione italiana">ITA</abbr></span>
+	      </li>
+	      <li class="divider-vertical">|</li>
+	      <li id="lien" class="dropdown langs">
+		<span class="dropdown-toggle"><abbr title="English version">ENG</abbr></span>
+	      </li>
+	    </ul>
+	  </div>
+        </header>
+    
+        <div class="content">
+          <div class="column one">
+
+
+              <div class="exlegend">
+                <span id="accessoa">Accesso a</span> <strong>file.didattica.polito.it</strong>
+              </div>
+<img src="/idp/images/separator-drop-shadow.png" class="separator" alt="Separator" style="min-width: 260px; border: 0px">
+
+            <form id="certlogin" action="/idp/Authn/X509Mixed/CertLogin" method="post" onSubmit="return verificacert();">
+              <section>
+                 <button class="form-element form-button-blue" type="submit"><span id="logincert">Login con certificato digitale</span></button>
+              </section>
+
+	      <input type="hidden" id="p_locale" value="it"/>
+<img src="/idp/images/separator-drop-shadow.png" class="separator" alt="Separator" style="min-width: 260px; border: 0px">
+            </form>
+              
+              <form id="login" action="/idp/Authn/X509Mixed/UserPasswordLogin" method="post" onSubmit="return verifica();">
+              <section>
+                <label for="j_username">Username</label>
+
+
+
+
+
+                <input class="form-element form-field" id="j_username" name="j_username" type="text" placeholder="Username"
+
+
+
+autofocus
+
+
+
+>
+              </section>
+
+              <section>
+                <label for="j_password">Password</label>
+                <input class="form-element form-field" id="j_password" name="j_password" type="password" placeholder="Password">
+              </section>
+
+              <section>
+              <button class="form-element form-button" type="submit"><span id="usernamepassword">Login con username e password</span></button>
+              </section>
+            </form>
+    <!-- AGID - SPID IDP BUTTON MEDIUM "ENTRA CON SPID" * begin * -->
+    <form name="spid_idp_access" action="https://spididp.polito.it/SpidLogin.php" method="post" id="spid" style="display: block;" >
+        <img src="/idp/images/separator-drop-shadow.png" class="separator" alt="Separator" style="min-width: 260px; border: 0px">
+        <input type="hidden" name="name" value="POLITO SPID LOGIN" />
+        <input type="hidden" name="req_url" value="https://idp.polito.it/idp/x509mixed-login" />
+        <input type="hidden" name="target_url" value="https://idp.polito.it:443/idp/Authn/X509Mixed/SpidLogin" />
+        <input type="hidden" name="req_client" value="172.21.40.13" />
+        <input type="hidden" name="authn" value="8daac7ce4888423af15500d956cfe33fc2542b00c144a48462d2c44e5a0d6aa4" />
+        <a href="#" class="italia-it-button italia-it-button-size-m button-spid" spid-idp-button="#spid-idp-button-medium-post" aria-haspopup="true" aria-expanded="false">
+            <span class="italia-it-button-icon"><img src="/idp/img/spid-ico-circle-bb.svg" onerror="this.src='/idp/img/spid-ico-circle-bb.png'; this.onerror=null;" alt="" /></span>
+            <span class="italia-it-button-text">Entra con SPID</span>
+        </a>
+        <div id="spid-idp-button-medium-post" class="spid-idp-button spid-idp-button-tip spid-idp-button-relative">
+            <ul id="spid-idp-list-medium-root-post" class="spid-idp-button-menu" aria-labelledby="spid-idp">
+                <li class="spid-idp-button-link" data-idp="arubaid">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="aruba_id" type="submit"><span class="spid-sr-only">Aruba ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-arubaid.svg" onerror="this.src='/idp/img/spid-idp-arubaid.png'; this.onerror=null;" alt="Aruba ID" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="infocertid">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="infocert_id" type="submit"><span class="spid-sr-only">Infocert ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-infocertid.svg" onerror="this.src='/idp/img/spid-idp-infocertid.png'; this.onerror=null;" alt="Infocert ID" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="infocamere">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="infocamere" type="submit"><span class="spid-sr-only">Infocamere ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-infocamereid.svg" onerror="this.src='/idp/img/spid-idp-infocamereid.png'; this.onerror=null;" alt="Infocamere ID" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="intesigroup">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="intesigroup" type="submit"><span class="spid-sr-only">Intesi Group ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-intesigroupspid.svg" onerror="this.src='/idp/img/spid-idp-intesigroupspid.png'; this.onerror=null;" alt="Intesi Group ID" /></button>
+                </li>
+                </li>
+                <li class="spid-idp-button-link" data-idp="lepidaid">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="lepida_id" type="submit"><span class="spid-sr-only">Lepida ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-lepidaid.svg" onerror="this.src='/idp/img/spid-idp-lepidaid.png'; this.onerror=null;" alt="Lepida ID" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="namirialid">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="namirial_id" type="submit"><span class="spid-sr-only">Namirial ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-namirialid.svg" onerror="this.src='/idp/img/spid-idp-namirialid.png'; this.onerror=null;" alt="Namirial ID" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="posteid">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="poste_id" type="submit"><span class="spid-sr-only">Poste ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-posteid.svg" onerror="this.src='/idp/img/spid-idp-posteid.png'; this.onerror=null;" alt="Poste ID" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="sielteid">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="sielte_id" type="submit"><span class="spid-sr-only">Sielte ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-sielteid.svg" onerror="this.src='/idp/img/spid-idp-sielteid.png'; this.onerror=null;" alt="Sielte ID" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="spiditalia">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="spiditalia" type="submit"><span class="spid-sr-only">SPIDItalia Register.it</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-spiditalia.svg" onerror="this.src='/idp/img/spid-idp-spiditalia.png'; this.onerror=null;" alt="SpidItalia" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="teamsystem">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="teamsystem" type="submit"><span class="spid-sr-only">TeamSystem ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-teamsystemid.svg" onerror="this.src='/idp/img/spid-idp-teamsystemid.png'; this.onerror=null;" alt="TeamSystem ID" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="timid">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="tim_id" type="submit"><span class="spid-sr-only">Tim ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-timid.svg" onerror="this.src='/idp/img/spid-idp-timid.png'; this.onerror=null;" alt="Tim ID" /></button>
+                </li>
+                <li class="spid-idp-button-link" data-idp="etnaid">
+                    <button class="idp-button-idp-logo" name="spid_idp" value="etna_id" type="submit"><span class="spid-sr-only">Etna ID</span><img class="spid-idp-button-logo" src="/idp/img/spid-idp-etnaid.svg" onerror="this.src='/idp/img/spid-idp-etnaid.png'; this.onerror=null;" alt="Etna ID" /></button>
+                </li>
+                <li class="spid-idp-support-link" data-spidlink="info">
+                    <a href="https://www.spid.gov.it">Maggiori informazioni</a>
+                </li>
+                <li class="spid-idp-support-link" data-spidlink="rich">
+                    <a href="https://www.spid.gov.it/richiedi-spid">Non hai SPID?</a>
+                </li>
+                <li class="spid-idp-support-link" data-spidlink="help">
+                    <a href="https://www.spid.gov.it/serve-aiuto">Serve aiuto?</a>
+                </li>
+            </ul>
+        </div>
+    </form>
+    <!-- AGID - SPID IDP BUTTON MEDIUM "ENTRA CON SPID" * end * -->
+    <!-- AGID - EIDAS IDP BUTTON MEDIUM "ENTER WITH CIE" * begin * -->
+    <form name="cie_idp_access" action="https://cieidp.polito.it/CieLogin.php" method="post" id="cie" style="display: block;" >
+        <img src="/idp/images/separator-drop-shadow.png" class="separator" alt="Separator" style="min-width: 260px; border: 0px">
+        <input type="hidden" name="name" value="POLITO CIE LOGIN" />
+        <input type="hidden" name="req_url" value="https://idp.polito.it/idp/x509mixed-login" />
+        <input type="hidden" name="target_url" value="https://idp.polito.it:443/idp/Authn/X509Mixed/CieLogin" />
+        <input type="hidden" name="req_client" value="172.21.40.13" />
+        <input type="hidden" name="authn" value="8daac7ce4888423af15500d956cfe33fc2542b00c144a48462d2c44e5a0d6aa4" />
+        <button class="italia-it-button italia-it-button-size-m button-cie" name="spid_idp" value="cie_id" type="submit">
+            <span class="italia-it-button-icon"><img src="/idp/img/cie-id.svg" onerror="this.src='/idp/img/cie-id.png'; this.onerror=null;" alt="" /></span>
+            <span class="italia-it-button-text">Entra con Cie</span>
+        </button>
+    </form>
+    <!-- AGID - EIDAS IDP BUTTON MEDIUM "ENTER WITH CIE" * end * -->
+    <!-- AGID - EIDAS IDP BUTTON MEDIUM "ENTER WITH EIDAS" * begin * -->
+    <form name="eidas_idp_access" action="https://spididp.polito.it/eidasLogin.php" method="post" id="eidas" style="display: none;" >
+        <img src="/idp/images/separator-drop-shadow.png" class="separator" alt="Separator" style="min-width: 260px; border: 0px">
+        <input type="hidden" name="name" value="POLITO SPID LOGIN" />
+        <input type="hidden" name="req_url" value="https://idp.polito.it/idp/x509mixed-login" />
+        <input type="hidden" name="target_url" value="https://idp.polito.it:443/idp/Authn/X509Mixed/eidasLogin" />
+        <input type="hidden" name="req_client" value="172.21.40.13" />
+        <input type="hidden" name="authn" value="8daac7ce4888423af15500d956cfe33fc2542b00c144a48462d2c44e5a0d6aa4" />
+        <button class="italia-it-button italia-it-button-size-m button-eidas" name="spid_idp" value="eidas_id" type="submit">
+            <span class="italia-it-button-icon"><img src="img/ficep-it-eidas-ybw.svg" onerror="this.src='img/ficep-it-eidas-ybw.png'; this.onerror=null;" alt="" /></span>
+            <span class="italia-it-button-text">Login with eIDAS</span>
+        </button>
+    </form>
+    <!-- AGID - EIDAS IDP BUTTON MEDIUM "ENTER WITH EIDAS" * end * -->
+<style>
+.italia-it-button-text {
+    color: #FFF;
+}
+.italia-it-button-size-m{
+    width:270px;
+    padding-left: 0px;
+    padding-right: 0px;
+    box-sizing: content-box;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+.spid-idp-button .spid-idp-button-menu li > a img{
+box-sizing:content-box
+}
+.italia-it-button-size-m > span img {
+    margin-bottom: 0px;
+}
+.italia-it-button-icon {
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+span.italia-it-button-text {
+    padding-top: .8em;
+    padding-bottom: .8em;
+}
+.button-spid:hover {
+    background-color: #0080ff;
+}
+.langbutts {
+    margin-left: 290px;
+}
+img {
+    margin-bottom: 0px;
+}
+.separator {
+    margin-bottom: 12px;
+}
+form {
+    padding-bottom: 10px;
+}
+.exlegend {
+    text-align: center;
+}
+</style>
+    <script type="text/javascript" src="/idp/js/spid-sp-access-button.min.js"></script>
+    <script type="text/javascript" src="/idp/js/eidas-sp-access-button.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            var rootList = $("#spid-idp-list-medium-root-post");
+            var idpList = rootList.children(".spid-idp-button-link");
+            var lnkList = rootList.children(".spid-idp-support-link");
+            while (idpList.length) {
+                rootList.append(idpList.splice(Math.floor(Math.random() * idpList.length), 1)[0]);
+            }
+            rootList.append(lnkList);
+$(document).keydown(function(e){
+  if (e.keyCode==90 && e.ctrlKey) toggle_visibility('eidas');
+  if (e.keyCode==88 && e.ctrlKey) toggle_visibility('cie');
+});
+        });
+    </script>
+
+
+
+          </div>
+        </div>
+      </div>
+<!--
+      <footer>
+        <div class="container container-footer">
+          <p class="footer-text"><span="politoshib">Politecnico di Torino | Shibboleth IDP</span></p>
+        </div>
+      </footer>
+-->
+          <div class="container2">
+            <ul class="list list-help">
+              <li class="list-help-item"><a href="/Chpass/chpassservlet/main.htm"><span class="item-marker">&rsaquo;</span> <span id="modificapassword">Modifica password</span></a></li>
+
+              <li class="list-help-item"><a href="/Chpass/chpassservlet/main.htm?p_reset=Y"><span class="item-marker">&rsaquo;</span> <span id="dimenticato">Hai dimenticato la password?</span></a></li>
+              <li class="list-help-item"><a href="#" onclick="toggle_visibility('help');"><span class="item-marker">&rsaquo;</span> <span id="bisognoaiuto">Hai bisogno di aiuto?</span></a></li>
+            </ul>
+<div id="help" style="display: none;">
+<b><span id="supporto">Supporto agli utenti</span></b><br>
+<span id="ricordadicomunicare"> Ricorda di comunicare sempre il tuo nominativo e numero di matricola, se sei uno studente o fai parte del personale e di segnalare chiaramente il tipo di problema che riscontri.
+</span><br><br>
+<b><span id="studenti">Studenti</span></b><br>
+<span><span id="contatta">Contatta l'</span>
+<a style="text-decoration: underline;" href="https://sid.polito.it/ticket/online/guest" target="_blank"><b><span id="helpdesk">Help Desk</span></b></a>
+<span id="areagestione">dell'Area Gestione Didattica</span></span><br><br>
+<b id="personale">Personale</b><br>
+<span id="contattaservicedesk">Contatta il Service Desk dell'Area Information Technology:</span><br>
+<p>
+- <span id="telefonaal">telefona al</span> 5050 (+39 011 090 5050 <span id="dallesterno">dall'esterno del Politecnico</span>)<br>
+  - <span id="scrivimessaggio2">scrivi un messaggio all'indirizzo</span> sd.areait@polito.it
+    </p><br>
+		
+						<b id="aziende">Aziende</b><br>
+						<span id="scrivimessaggio3">Contatta l'Ufficio Career Services indicando Ragione sociale, partita iva e i dettagli del problema riscontrato all'indirizzo </span><a href="mailto:career.service@polito.it">career.service@polito.it</a><br>
+						
+						</div>
+          </div>
+
+    </div>
+  </body>
+</html>
